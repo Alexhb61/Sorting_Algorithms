@@ -1,0 +1,30 @@
+#Given a list of n numbers between [0,poly(n)]
+#Sorts the list in O((logn)(loglogn)) depth O(n(logn)) work
+def smallsort(nums,bitrange) :
+    if log(len(nums)) =< 2*len(bitrange) :
+        upperrange,lowerrange = break(bitrange) 
+        nums = smallsort(nums,lowerrange) ;
+        return smallsort(nums,upperrange)
+    else:
+        m = 2^(len(bitrange))
+        l = n/m
+        declare node,values = array of empty linked lists.
+        parfor i = 0 to l do : 
+            smallsort(nums[m*i,m*(i+1)],bitrange )
+            parfor j = 0 to m do :
+                 node[i*m+j].key = nums[i*m+j]
+                 node[i*m+j].next = nums[i*m+j] == nums[i*m+j+1] ? node[i*m+j+1] : nil
+                 key = nums[i*m +j]
+                 if key == nums[i*m+j -1] :
+                      values[key*l + j] = node[i*m+j]
+        return prune_flatten(values) //remove nodes which have no keys
+#Correctness:
+This algorithm's top section breaks the bit range in half until the range is O(sqrt(n))
+Then it breaks the list into O(sqrt(n)) sized sections & sorts all the sections.
+It then takes the runs in each section and assignes them the appropriate location.
+This algorithm can be seen as a parallelization of tinysort.
+#runtime:
+Depth is (logn)loglogn because its recursion is T(m) = 2T(m/2) + O(m) where m starts as log(m)
+where the dpeth for each run is mostly in the prune and flatten step.
+Work is nlogn because its T(n) = 2sqrt(n)T(sqrt(n)) + O(n) The largest term ending up being nlogn.
+#note I thought this was nloglog(n) work until I noticed the error on type up.
