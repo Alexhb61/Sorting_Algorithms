@@ -29,3 +29,5 @@ and location, then become sorted by the flatten operation.
 Tinysort runs roundsort O(1) times because log(poly(log(n))) = O(loglog(n))
 Roundsort takes O(logn) sequential steps with O(n/logn) processes to do the assigning, and
 flatten does O(logn) depth and O(n) work.
+#note If applied to Poly(n) universe takes:
+log(n)^2/loglog(n) depth and nlog(n)/loglog(n) work
