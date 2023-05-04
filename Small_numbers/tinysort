@@ -1,0 +1,30 @@
+#Given A list of n numbers between [0,poly(log(n))]
+#pseudocode
+def tinysort( nums):
+   l = loglog(len(nums));
+   b = len(nums.bits);
+   for i = 0 to b/l :
+      numbers = nums with keys from i*l bits to (i+1)*l bits 
+      nums update with roundsort(numbers)
+#This algoirthm will stably sort O(loglogn) bits at a time.      
+def roundsort(numbers):
+  l = log(len(numbers))
+  m = len(numbers)/l
+  output = array of empty lists
+  parfor i = 0 to m do :
+      for r = 0 to l :
+          key = numbers[i*l + r]
+          output[key.value*m + i].append(key)
+  flatten(output)
+#CORRECTNESS:
+If roundsort is stable, tinysort is correct by the correctness of LSB radix.
+Roundsort breaks the array into m sections and sorts each section in r rounds.
+The output array has r==l chunks each whith m locations.
+In each round, the active keys are sorted via assignment to the right chunk, 
+and no conflicts between processors occur because each section has its own location in each chunk.
+When a section has multiple copies of the same key, They end up in the same list at a specific chunk
+and location, then become sorted by the flatten operation.
+#Analysis
+Tinysort runs roundsort O(1) times because log(poly(log(n))) = O(loglog(n))
+Roundsort takes O(logn) sequential steps with O(n/logn) processes to do the assigning, and
+flatten does O(logn) depth and O(n) work.
