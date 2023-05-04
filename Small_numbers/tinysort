@@ -1,4 +1,5 @@
 #Given A list of n numbers between [0,poly(log(n))]
+#Sorts the list in O(log(n)) depth and O(n) work
 #pseudocode
 def tinysort( nums):
    l = loglog(len(nums));
