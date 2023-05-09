@@ -1,0 +1,29 @@
+Claim: The Bitonic merge generates a min-max binomial heap.
+Definition: A min-max binomial heap is 2^k numbers organized such that it is both a 
+full min binomial heap and a full max binomial heap. A full min binomial heap has a
+root with k children, going from size 2^0 ... 2^(k-1), and each child is a full min binomial heap,
+And the root being smaller than all the children.
+
+Let A,B be a min-max binomial heaps of equal size stored in an array in smallest sized child first preorder ordering.
+Note the max heap is seen by reversing the ordering.
+We can construct a new min-max binomial heap C, by connecting A[i] to B[i] with a comparator for all i.
+Proof by contradiction:
+Claim some connection C[i] should be less than C[j] but C[i] > C[j]
+Case 1: i,j < 2^(k-1) for C of size 2^k
+Before the combination A[i] < A[j] by self similarity. likewise B[i] < B[j].
+Case A: Both comparator i and j swap, therefore C[i] < C[j] Because B has that property.
+Case B: i swaps and j doesnt, therefore C[i] < C[j] because B[i] < A[i] < A[j]
+Case C: j swaps and i doesn't, therefore C[i] < C[j] because A[i] < B[i] < B[j]
+Case D: Neither swaps, therefore C[i] < C[j] because A[i] < A[j]
+Case 2: i,j >= 2^(k-1) for C of size of 2^k
+Before the combination A[i- 2^(k-1)] < A[j-2^(k-1)] by self similarity. 
+likewise B[i-2^(k-1)] < B[j-2^(k-1)].
+Case A: Both comparator i and j swap, Thus C[i] < C[j] because A[i- 2^(k-1)] < A[j-2^(k-1)]
+Case B: I swaps, and j doesn't, Thus C[i] < C[j] because A[i- 2^(k-1)] < A[j-2^(k-1)] < B[j-2^(k-1)]
+Case C: j swaps, and i doesn't, Thus C[i] < C[j] because B[i-2^(k-1)] < B[j-2^(k-1)] < A[j-2^(k-1)]
+Case D: Neither swaps, Thus C[i] < C[j] because B[i-2^(k-1)] < B[j-2^(k-1)].
+Case 3: i = 0, j >= 2^(k-1)
+Case A: C[0] is the min of the min of A and the min of B therefore <= C[j]
+Case 4: 0 < i < 2^(k-1) <= j or reverse i,j:
+Invalid constraint for min heap. They aren't related by a heap property.
+The claim about bitonic merge follows from bitonic merge recursively applying this exact sae construction.
