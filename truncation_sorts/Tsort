@@ -1,0 +1,54 @@
+#Given a list of n items with w bits each this rough untested algorithm will sort them in O(n(logw)log(logn/logw)) work and O((logw + logn)log(logn/logw)) depth
+# w.h.p.
+#Assumptions: hashing, comparison and truncation must take O(1) time 
+#       there is ideal parallel hash table O(n) work O(logn) depth to construct and O(1) time parallel lookup.
+#Missing Lemma: if we sample s times from a list they will be roughly divide the list into s sections of O(n/s) size Look at Rajasekaran & Reif 1989
+Tsort(L) : 
+  n = len(L)
+  p = 1/sqrt(n)
+  S = List(n)
+  w = size(L[0])
+  if n < w^2 :
+    sort(S) #using the base case sort
+  parfor m \in L at location i: 
+      With Probability p:
+         insert m to S at location i
+  coalesce(S)
+  sort(S) #using a n^2 work logn depth comparison sort
+  Turn S into a Radix Tree T
+  Construct a Hashtable H
+  Buckets = List(n/len(S))
+  parfor node n in T:
+    Create a Bucket B 
+  parfor nodelet n in T: #What would be a node in the uncompressed trie
+    Insert the association (the prefix n represents, the bucket n's node owns) into H
+  parfor m \in L at location i:
+    #this is an attempt at non recursive binary search. THIS CODE HAS AN OFF BY ONE error
+    point = len(m)
+    for i = log(n) to 1 :
+      if m[0 to point] not \in H :
+        point -= 2^i 
+      else
+        point += 2^i
+    B = H[m[0 to point]]
+    Insert m into B
+  parfor B in Buckets
+    Tsort(B)
+  Using postorder of T: Concatenate all buckets into an output list.
+#Correctness:
+Rounding error and Pseudo code nature make this difficult to prove precisely.
+The main argument worth expressing is why all the elements have been put in the right bucket, and why the buckets can be merely concatenated together:
+The binary search finds the longest prefix a number m shares with a nodelet n in T.
+ERROR MIGHT NEED MORE BUCKETS
+#analysis:
+Taking our base case sort to be a parrallel optimal merge sort.
+The base case does n/w * wlogw work.
+Sampling, coalescing and sorting S does O(n) work per recursion.
+We are assuming for simplicity that the hashing, bucketing and Radix Tree logic works in O(sqrt(n)*w) work
+Which by the base case's test is less than O(n)
+The binary search does log(w) lookups for each of the n entries in the list. So nlog(w) work.
+Argument 2 is that log(log(n)/log(w)) recursions occur.
+We are asking how many times n needs to be sqrted to get less than w^2.
+If n = 2^k and w =2^l then this is equivalent to asking how many times k needs to be halfed to get 2l.
+ which is clearly log(k/(2l)) = log(k/l) + log(1/2). or O(log(log(n)/log(k)))
+    
