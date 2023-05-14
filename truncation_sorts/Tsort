@@ -19,9 +19,10 @@ Tsort(L) :
   Construct a Hashtable H
   Buckets = List(n/len(S))
   parfor node n in T:
-    Create a Bucket B 
+    Create two Bucket Left and Right 
+    Put them into Buckets
   parfor nodelet n in T: #What would be a node in the uncompressed trie
-    Insert the association (the prefix n represents, the bucket n's node owns) into H
+    Insert the association (the prefix n represents, the pair of buckets n's node owns) into H
   parfor m \in L at location i:
     #this is an attempt at non recursive binary search. THIS CODE HAS AN OFF BY ONE error
     point = len(m)
@@ -30,16 +31,29 @@ Tsort(L) :
         point -= 2^i 
       else
         point += 2^i
-    B = H[m[0 to point]]
-    Insert m into B
+    #Adjust point by at most one.
+    if m[0 to point] not \in H :
+      point -= 1
+    (node,Left,Right) = H[m[0 to point]]
+    if m < node :
+      Left.insert(m)
+    else : # equality should only happen on leafs.
+      Right.insert(m)
   parfor B in Buckets
     Tsort(B)
-  Using postorder of T: Concatenate all buckets into an output list.
+  Using a euler tour of T: Concatenate all buckets into an output list. with the left bucket at the first visit and right bucket at the second visit.
 #Correctness:
-Rounding error and Pseudo code nature make this difficult to prove precisely.
+Binary Search: Three cases:
+too short, too long, just right:
+If the prefix is too short we search for longer. if the prefix is too long we search for shorter.
+If the prefix is just right we will go longer once then shorter until we are off by one and the last line will adjust that.
 The main argument worth expressing is why all the elements have been put in the right bucket, and why the buckets can be merely concatenated together:
-The binary search finds the longest prefix a number m shares with a nodelet n in T.
-ERROR MIGHT NEED MORE BUCKETS
+The binary search finds the longest prefix a number m shares with a nodelet n in T. Let k be the node below nodelet n.
+If m < k then in the Trie it would branch of to the left above k.
+If m > k then in the Trie it would branch of to the right above k.
+If m = k then in the Trie it would be a child of k which since we found the longest prefixes should only happen with leafs.
+In the leaf case we would want a middle bucket but the right bucket would do.
+Euler tour order should maintain ordering of keys via properties of a trie.
 #analysis:
 Taking our base case sort to be a parrallel optimal merge sort.
 The base case does n/w * wlogw work.
